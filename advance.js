@@ -1,5 +1,5 @@
 import { brUuid, labelName, btnList, systemCfg,
-    multitapCfg, inquiryMode, devCfg, accCfg, turboMask,
+    multitapCfg, inquiryMode, modchipAutoDisable, devCfg, accCfg, turboMask,
     scaling, diagScaling, maxMainInput, maxOutput,
     maxMax, maxThres }
     from './utils/constants.js';
@@ -126,6 +126,28 @@ function initGlobalCfg() {
         option.text = 'Debug mode';
         sel.add(option);
         sel.id = "banksel";
+        div.appendChild(label);
+        div.appendChild(sel);
+
+        divGlobalCfg.appendChild(div);
+    }
+
+    if (apiVersion > 2) {
+        div = document.createElement("div");
+
+        /* Modchip auto-disable (PS2: hold Start ~10s on power-on) */
+        label = document.createElement("label");
+        label.innerText = 'PS2 modchip auto-disable: ';
+        label.setAttribute("for", "modchipAutoDisable");
+
+        sel = document.createElement("select");
+        for (var i = 0; i < modchipAutoDisable.length; i++) {
+            var option  = document.createElement("option");
+            option.value = i;
+            option.text = modchipAutoDisable[i];
+            sel.add(option);
+        }
+        sel.id = "modchipAutoDisable";
         div.appendChild(label);
         div.appendChild(sel);
 
@@ -713,6 +735,9 @@ function loadGlobalCfg() {
             if (apiVersion > 1) {
                 document.getElementById("banksel").value = value.getUint8(3);
             }
+            if (apiVersion > 2) {
+                document.getElementById("modchipAutoDisable").value = value.getUint8(4);
+            }
             resolve();
         })
         .catch(error => {
@@ -862,7 +887,10 @@ function loadInputCfg(cfgId) {
 
 function saveGlobal() {
     document.getElementById("globalSaveText").style.display = 'none';
-    if (apiVersion > 1) {
+    if (apiVersion > 2) {
+        var data = new Uint8Array(5);
+    }
+    else if (apiVersion > 1) {
         var data = new Uint8Array(4);
     }
     else if (apiVersion > 0) {
@@ -878,6 +906,9 @@ function saveGlobal() {
     }
     if (apiVersion > 1) {
         data[3] = document.getElementById("banksel").value;
+    }
+    if (apiVersion > 2) {
+        data[4] = document.getElementById("modchipAutoDisable").value;
     }
     return new Promise(function(resolve, reject) {
         saveGlobalCfg(brService, data)

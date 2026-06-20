@@ -422,6 +422,11 @@ export const inquiryMode = [
     'Manual',
 ];
 
+export const modchipAutoDisable = [
+    'Disabled',
+    'Enabled',
+];
+
 export const devCfg = [
     'GamePad',
     'GamePadAlt',

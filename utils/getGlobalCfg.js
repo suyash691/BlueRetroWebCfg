@@ -23,6 +23,9 @@ export const getGlobalCfg = (service, apiver) => {
         if (apiver > 1) {
           temp = new Uint8Array(4);
         }
+        if (apiver > 2) {
+          temp = new Uint8Array(5);
+        }
 
         //systemCfg value
         temp[0] = value.getUint8(0);
@@ -34,6 +37,10 @@ export const getGlobalCfg = (service, apiver) => {
         if (apiver > 1) {
           //bank select value
           temp[3] = value.getUint8(3);
+        }
+        if (apiver > 2) {
+          //modchip auto-disable value
+          temp[4] = value.getUint8(4);
         }
         resolve(temp);
       });
